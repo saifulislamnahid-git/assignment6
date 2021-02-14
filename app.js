@@ -4,6 +4,7 @@ const galleryHeader = document.querySelector('.gallery-header');
 const searchBtn = document.getElementById('search-btn');
 const sliderBtn = document.getElementById('create-slider');
 const sliderContainer = document.getElementById('sliders');
+const searchFor = document.getElementById('search-for');
 // selected image 
 let sliders = [];
 
@@ -15,16 +16,23 @@ const KEY = '15674931-a9d714b6e9d654524df198e00&q';
 
 // show images 
 const showImages = (images) => {
-    imagesArea.style.display = 'block';
-    gallery.innerHTML = '';
-    // show gallery title
-    galleryHeader.style.display = 'flex';
-    images.forEach(image => {
-        let div = document.createElement('div');
-        div.className = 'col-lg-3 col-md-4 col-xs-6 img-item mb-2';
-        div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
-        gallery.appendChild(div)
-    })
+    console.log(images.length);
+    if (images.length == 0) {
+        document.getElementById('search-not-found').innerText = 'There are no search result. Please try again!'
+        imagesArea.style.display = 'none';
+    } else {
+        document.getElementById('search-not-found').innerText = '';
+        imagesArea.style.display = 'block';
+        gallery.innerHTML = '';
+        // show gallery title
+        galleryHeader.style.display = 'flex';
+        images.forEach(image => {
+            let div = document.createElement('div');
+            div.className = 'col-lg-3 col-md-4 col-xs-6 img-item mb-2';
+            div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
+            gallery.appendChild(div)
+        })
+    }
 
 }
 
@@ -37,18 +45,20 @@ const getImages = (query) => {
 
 let slideIndex = 0;
 const selectItem = (event, img) => {
+    console.log("Before Target event", event);
     let element = event.target;
-    element.classList.add('added');
+    console.log('Target Element', element);
+    element.classList.toggle('added');
 
     let item = sliders.indexOf(img);
+    console.log('Slider index', item);
     if (item === -1) {
         sliders.push(img);
-    } else {
-        alert('Hey, Already added !')
     }
 }
 var timer
 const createSlider = () => {
+    searchFor.innerText = '';
     // check slider image length
     const durationValue = document.getElementById('duration').value;
     if (sliders.length < 2) {
@@ -117,9 +127,10 @@ const changeSlide = (index) => {
 searchBtn.addEventListener('click', function() {
     document.querySelector('.main').style.display = 'none';
     clearInterval(timer);
-    const search = document.getElementById('search');
-    getImages(search.value)
+    const search = document.getElementById('search').value;
+    getImages(search)
     sliders.length = 0;
+    searchFor.innerText = `Search Result for "${search}"`;
 })
 
 sliderBtn.addEventListener('click', function() {
