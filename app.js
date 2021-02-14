@@ -33,14 +33,17 @@ const showImages = (images) => {
             gallery.appendChild(div)
         })
     }
-
+    toggleSpinner();
 }
 
 const getImages = (query) => {
-    fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
+    const url = `https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`;
+    toggleSpinner();
+    fetch(url)
         .then(response => response.json())
         .then(data => showImages(data.hits))
         .catch(err => console.log(err))
+
 }
 
 let slideIndex = 0;
@@ -145,3 +148,8 @@ document.getElementById('search')
             document.getElementById("search-btn").click();
         }
     });
+
+const toggleSpinner = () => {
+    const spinner = document.getElementById('loading-spinner');
+    spinner.classList.toggle('d-none');
+}
